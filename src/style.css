@@ -1,0 +1,394 @@
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  
+  /* 响应式设计变量 */
+  --font-size-small: 0.8rem;
+  --font-size-normal: 1rem;
+  --font-size-large: 1.2rem;
+  --font-size-xl: 1.5rem;
+  --font-size-xxl: 2rem;
+  
+  --spacing-xs: 8px;
+  --spacing-sm: 12px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  
+  --border-radius-sm: 8px;
+  --border-radius-md: 12px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
+}
+
+/* 响应式基础样式 */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+}
+
+#app {
+  width: 100%;
+  min-height: 100vh;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+}
+
+/* 响应式字体大小 */
+@media (max-width: 768px) {
+  :root {
+    --font-size-small: 0.7rem;
+    --font-size-normal: 0.9rem;
+    --font-size-large: 1.1rem;
+    --font-size-xl: 1.3rem;
+    --font-size-xxl: 1.7rem;
+  }
+  
+  #app {
+    padding: var(--spacing-sm);
+  }
+}
+
+/* NFC Reader Styles */
+.nfc-container {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  margin: var(--spacing-lg) 0;
+  transition: transform 0.3s ease;
+  text-align: center;
+}
+
+.nfc-container:hover {
+  transform: translateY(-5px);
+}
+
+.nfc-title {
+  font-size: var(--font-size-xxl);
+  margin-bottom: var(--spacing-lg);
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.nfc-status {
+  font-size: var(--font-size-large);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-sm);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  color: white;
+}
+
+.nfc-message {
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-lg);
+  margin-top: var(--spacing-md);
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.nfc-message h3 {
+  color: #333;
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-large);
+}
+
+.nfc-message-content {
+  color: #666;
+  font-family: 'Courier New', monospace;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  font-size: var(--font-size-small);
+}
+
+.nfc-error {
+  background: rgba(255, 87, 34, 0.1);
+  border-left: 4px solid #ff5722;
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+  color: #ff5722;
+}
+
+.nfc-success {
+  background: rgba(76, 175, 80, 0.1);
+  border-left: 4px solid #4caf50;
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  border-radius: 0 var(--border-radius-sm) var(--border-radius-sm) 0;
+  color: #4caf50;
+}
+
+.button-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-normal);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: var(--spacing-xs);
+}
+
+.button-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.button-secondary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-normal);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: var(--spacing-xs);
+}
+
+.button-secondary:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+
+.loading-spinner {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+  margin: var(--spacing-md) 0;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 充电宝信息卡片样式 */
+.power-bank-container {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: var(--spacing-md);
+}
+
+/* 环形电量显示 */
+.battery-level-container {
+  position: relative;
+  width: 60vw;
+  height: 60vw;
+  max-width: 200px;
+  max-height: 200px;
+  margin: 0 auto var(--spacing-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.battery-circle {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.battery-circle-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 12;
+  vector-effect: non-scaling-stroke;
+}
+
+.battery-circle-progress {
+  fill: none;
+  stroke: #4caf50;
+  stroke-width: 12;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.5s ease;
+  vector-effect: non-scaling-stroke;
+}
+
+.battery-level-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  width: 100%;
+}
+
+.battery-percentage {
+  font-size: 8vw;
+  font-weight: bold;
+  color: white;
+  line-height: 1;
+  margin-bottom: 2px;
+}
+
+.battery-status {
+  font-size: var(--font-size-normal);
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: var(--spacing-xs);
+}
+
+/* 响应式调整 */
+@media (min-width: 480px) {
+  .battery-percentage {
+    font-size: 2.5rem;
+  }
+}
+
+/* 信息卡片 */
+.info-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(10px);
+}
+
+.info-card h2 {
+  color: #333;
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-xl);
+  text-align: center;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: var(--spacing-sm);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.info-item {
+  text-align: center;
+  padding: var(--spacing-sm);
+  background: #f9f9f9;
+  border-radius: var(--border-radius-md);
+  transition: transform 0.2s ease;
+}
+
+.info-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.info-label {
+  font-size: var(--font-size-small);
+  color: #666;
+  margin-bottom: var(--spacing-xs);
+}
+
+.info-value {
+  font-size: var(--font-size-large);
+  font-weight: 600;
+  color: #333;
+}
+
+.info-unit {
+  font-size: var(--font-size-small);
+  color: #999;
+  margin-left: 2px;
+}
+
+/* 底部版权信息 */
+.footer {
+  text-align: center;
+  margin-top: var(--spacing-xl);
+  margin-bottom: var(--spacing-md);
+  font-size: var(--font-size-small);
+  color: rgba(255, 255, 255, 0.6);
+  padding-top: var(--spacing-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 状态指示器 */
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.status-active {
+  background-color: #4caf50;
+  box-shadow: 0 0 8px #4caf50;
+}
+
+.status-idle {
+  background-color: #ffc107;
+  box-shadow: 0 0 8px #ffc107;
+}
+
+.status-error {
+  background-color: #f44336;
+  box-shadow: 0 0 8px #f44336;
+}
+
+/* 健康状态指示器 */
+.health-good {
+  color: #4caf50;
+}
+
+.health-fair {
+  color: #ffc107;
+}
+
+.health-poor {
+  color: #f44336;
+}
+
+/* 响应式调整 */
+@media (max-width: 480px) {
+  .battery-level-container {
+    width: 160px;
+    height: 160px;
+  }
+  
+  .battery-percentage {
+    font-size: 2rem;
+  }
+  
+  .info-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .nfc-container {
+    padding: var(--spacing-lg);
+  }
+  
+  .info-card {
+    padding: var(--spacing-md);
+  }
+}
