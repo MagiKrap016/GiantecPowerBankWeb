@@ -39,12 +39,8 @@ export async function readNFCContinuous(callback, batteryCallback, onLost) {
         console.log('NFC扫描已启动，请将标签靠近设备')
         reader.scan().then(() => {
           reader.addEventListener("reading", event => {
-            const record = event.message.records[1] 
-            console.log("Record type:  " + record.recordType);
-            console.log("MIME type:    " + record.mediaType);
-            console.log("Data:         " + record.data);
             try {
-              const batteryData = parseNDEFMessageForBattery(record)
+              const batteryData = parseNDEFMessageForBattery(event.message)
               if (batteryData && batteryCallback) {
                 batteryCallback(batteryData)
               }
