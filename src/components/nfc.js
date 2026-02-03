@@ -114,10 +114,6 @@ export async function readNFCContinuous(callback, batteryCallback, onLost) {
         try {
           const event = await readPromise
           const currentTime = Date.now()
-          
-          // 检查是否是新数据（至少间隔1秒）
-          if (currentTime - lastReadTime >= 1000) {
-            lastReadTime = currentTime
             
             if (!cardPresent) {
               cardPresent = true
@@ -142,7 +138,6 @@ export async function readNFCContinuous(callback, batteryCallback, onLost) {
               console.error('解析NDEF消息失败:', error)
               callback(`解析错误: ${error.message}`)
             }
-          }
         } catch (error) {
           // 读取超时或错误，可能是卡片丢失
           if (cardPresent) {

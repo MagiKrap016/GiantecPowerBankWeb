@@ -139,19 +139,19 @@ export default {
 
     // Battery information
     const batteryInfo = ref({
-      level: 75,
+      level: 0,
       status: 'idle', // charging, idle, error
-      capacity: 10000,
-      cycles: 120,
-      health: 85,
-      voltage: 3.8,
+      capacity: 0,
+      cycles: 0,
+      health: 0,
+      voltage: 0.0,
       current: 0.0,
-      temperature: 25,
-      chargeThreshold: 95,
-      dischargeThreshold: 20,
-      maxVoltage: 4.2,
-      minVoltage: 3.2,
-      maxTemperature: 45,
+      temperature:0,
+      chargeThreshold: 0,
+      dischargeThreshold: 0,
+      maxVoltage: 0.0,
+      minVoltage: 0.0,
+      maxTemperature: 0,
       minTemperature: 0
     })
 
