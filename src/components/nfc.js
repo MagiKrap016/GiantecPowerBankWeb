@@ -3,59 +3,6 @@
  * 用于读取和解析NDEF消息
  */
 import { parseBatteryData } from '../utils/praser.js'
-
-export async function readNFC(callback, batteryCallback) {
-  // 检查浏览器是否支持Web NFC API
-  if (!('NDEFReader' in window)) {
-    throw new Error('您的浏览器不支持Web NFC API，请使用Chrome浏览器')
-  }
-
-  try {
-    const reader = new NDEFReader()
-    
-    // 开始扫描NFC标签
-    await reader.scan()
-    
-    console.log('NFC扫描已启动，请将标签靠近设备')
-    
-    // 监听NFC标签读取事件
-    reader.addEventListener('reading', (event) => {
-      console.log('读取到NFC标签:', event)
-      
-      try {
-        const message = event.message
-        const decodedMessage = decodeNDEFMessage(message)
-        callback(decodedMessage)
-        // 尝试解析充电宝数据（第二条消息）
-        try {
-          const batteryData = parseNDEFMessageForBattery(message)
-          if (batteryData && batteryCallback) {
-            batteryCallback(batteryData)
-          }
-        } catch (error) {
-          console.error('解析充电宝数据失败:', error)
-        }
-      } catch (error) {
-        console.error('解析NDEF消息失败:', error)
-        callback(`解析错误: ${error.message}`)
-      }
-    })
-    
-    // 监听错误事件
-    reader.addEventListener('error', (event) => {
-      console.error('NFC读取错误:', event)
-      throw new Error('NFC读取过程中发生错误')
-    })
-    
-    return {
-      watcher: reader
-    }
-  } catch (error) {
-    console.error('启动NFC扫描失败:', error)
-    throw error
-  }
-}
-
 /**
  * 持续读取NFC消息
  * @param {Function} callback - 消息回调函数
@@ -70,8 +17,8 @@ export async function readNFCContinuous(callback, batteryCallback, onLost) {
   }
 
   let isReading = true
-  let lastReadTime = 0
   let cardPresent = false
+  let currentTagId = null
   let reader = null
 
   const stopReading = () => {
@@ -113,35 +60,50 @@ export async function readNFCContinuous(callback, batteryCallback, onLost) {
 
         try {
           const event = await readPromise
-          const currentTime = Date.now()
-            
-            if (!cardPresent) {
-              cardPresent = true
-              console.log('检测到NFC标签')
-            }
+          
+          // 1. 先获取tag的id
+          const tagId = event.serialNumber || 'unknown'
+          
+          console.log('获取到标签ID:', tagId)
+          
+          // 检查标签是否变化
+          if (!cardPresent) {
+            cardPresent = true
+            currentTagId = tagId
+            console.log(`检测到NFC标签，ID: ${tagId}`)
+          } else if (currentTagId !== tagId) {
+            // 标签已更换
+            currentTagId = tagId
+            console.log(`NFC标签已更换，新ID: ${tagId}`)
+          }
 
+          // 2. 再读取ndef消息
+          console.log('开始读取NDEF消息...')
+          try {
+            const message = event.message.records[1]
+            console.log('成功读取NDEF消息:', message)
+            
+            const decodedMessage = decodeNDEFMessage(message)
+            callback(`标签ID: ${tagId}\n${decodedMessage}`)
+            
+            // 尝试解析充电宝数据（第二条消息）
             try {
-              const record = event.message.records[1]
-              const decodedMessage = decodeNDEFMessage(record)
-              callback(decodedMessage)
-              
-              // 尝试解析充电宝数据（第二条消息）
-              try {
-                const batteryData = parseNDEFMessageForBattery(record)
-                if (batteryData && batteryCallback) {
-                  batteryCallback(batteryData)
-                }
-              } catch (error) {
-                console.error('解析充电宝数据失败:', error)
+              const batteryData = parseNDEFMessageForBattery(message)
+              if (batteryData && batteryCallback) {
+                batteryCallback(batteryData)
               }
             } catch (error) {
-              console.error('解析NDEF消息失败:', error)
-              callback(`解析错误: ${error.message}`)
+              console.error('解析充电宝数据失败:', error)
             }
+          } catch (error) {
+            console.error('解析NDEF消息失败:', error)
+            callback(`标签ID: ${tagId}\n解析错误: ${error.message}`)
+          }
         } catch (error) {
           // 读取超时或错误，可能是卡片丢失
           if (cardPresent) {
             cardPresent = false
+            currentTagId = null
             console.log('NFC标签丢失')
             if (onLost) {
               onLost()
@@ -154,6 +116,7 @@ export async function readNFCContinuous(callback, batteryCallback, onLost) {
         console.error('读取循环错误:', error)
         if (cardPresent) {
           cardPresent = false
+          currentTagId = null
           console.log('NFC标签丢失')
           if (onLost) {
             onLost()
@@ -163,8 +126,9 @@ export async function readNFCContinuous(callback, batteryCallback, onLost) {
         reader = null
       }
 
-      // 等待1秒后继续下一次读取
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      // 等待1ms后继续下一次读取
+      await new Promise(resolve => setTimeout(resolve, 1))
+      console.log('等待1ms后开始下一次读取...')
     }
   }
 

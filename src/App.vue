@@ -124,7 +124,7 @@
 
 <script>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { readNFC, readNFCContinuous } from './components/nfc.js'
+import { readNFCContinuous } from './components/nfc.js'
 import { generateMockData, parseBatteryData } from './utils/praser.js'
 
 export default {
