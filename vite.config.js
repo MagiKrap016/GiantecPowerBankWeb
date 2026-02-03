@@ -12,5 +12,5 @@ export default defineConfig({
       cert: fs.readFileSync(path.resolve(__dirname, 'certs/cert.pem'))
     }
   },
-  base: './'
+  base: '/GiantecPowerBankWeb/'
 })
